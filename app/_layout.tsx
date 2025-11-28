@@ -1,24 +1,45 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import React, { useState, useEffect } from 'react';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+const InitialLayout = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const router = useRouter();
+  const segments = useSegments();
 
-export const unstable_settings = {
-  anchor: '(tabs)',
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        setIsLoggedIn(!!token);
+      } catch (e) {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn === null) {
+      // Still checking auth status
+      return;
+    }
+
+    const inDashboardGroup = segments[0] === 'dashboard';
+
+    if (isLoggedIn && !inDashboardGroup) {
+        // Logged in, but not in the main app yet, so redirect
+        router.replace('/dashboard');
+    } else if (!isLoggedIn) {
+        // Not logged in, so redirect to the login page
+        router.replace('/login');
+    }
+  }, [isLoggedIn]);
+
+  return <Stack screenOptions={{ headerShown: false }} />;
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+  return <InitialLayout />;
 }
