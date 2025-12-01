@@ -1,4 +1,3 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -37,9 +36,6 @@ const ListCandidateScreen = () => {
     landlordOffering: '',
     allocatedNominal: '',
     email: '',
-    address: '',
-    qualification: '',
-    experience: '',
     siteRegistrationStatus: '',
     siteElectricConnection: '',
     ownerFirstName: '',
@@ -48,6 +44,52 @@ const ListCandidateScreen = () => {
     ownerNumber: '',
     country: '',
     ownerRegionProvince: '',
+    length: '',
+    breadth: '',
+    doorPlotNumber: '',
+    building: '',
+    streetAddress: '',
+    sitepostCode: '',
+    provinceDistrict: '',
+    propertyRights: '',
+    leaseRestriction: '',
+    expectedLeaseAmount: '',
+    fenceType: '',
+    siteAccessPermit: '',
+    nearestFiberAccessPoint: '',
+    nearestFiberAccessPointDistance: '',
+    northEast: '',
+    east: '',
+    southEast: '',
+    southWest: '',
+    west: '',
+    northWest: '',
+    loadBearingPillars: '',
+    siteBuildingPlan: '',
+    frontElevation: '',
+    backElevation: '',
+    frontSideElevation: '',
+    secondSideElevation: '',
+    propertyGridStatus: '',
+    electicityConnectionType: '',
+    averageGridPower: '',
+    electricityConsumerNumber: '',
+    ownershipProof: '',
+    taxDocument: '',
+    incomeTaxReceipt: '',
+    landSurveyPlanReport: '',
+    waterBill: '',
+    electricityBill: '',
+    ownerDoorPlotNumber: '',
+    ownerBuilding: '',
+    ownerStreetAddress: '',
+    postCode: '',
+    district: '',
+    pinZip: '',
+    ownerCityTown: '',
+    consent1: '',
+    consent2: '',
+    consent: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
 
@@ -104,6 +146,11 @@ const ListCandidateScreen = () => {
         if (!formData.country) newErrors.country = 'Country is required.';
         if (!formData.ownerRegionProvince) newErrors.ownerRegionProvince = 'Region/Province is required.';
         if (userRole === 'A' && candidateType === 'allocated' && !formData.allocatedNominal) newErrors.allocatedNominal = 'Allocated Nominal is required.';
+        if (userRole === 'A' && formData.consent !== 'true') newErrors.consent = 'You must give consent to proceed.';
+    }
+    if (step === 5) {
+        if (formData.consent1 !== 'true') newErrors.consent1 = 'You must give consent to proceed.';
+        if (formData.consent2 !== 'true') newErrors.consent2 = 'You must give consent to proceed.';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -111,22 +158,27 @@ const ListCandidateScreen = () => {
 
   const nextStep = () => {
     if (validateStep()) {
-        if (step < 5) {
-          setStep(step + 1);
-        }
+      if (step === 2 && formData.siteElectricConnection === 'N') {
+        setStep(4);
+      } else if (step < 5) {
+        setStep(step + 1);
+      }
     }
   };
 
   const prevStep = () => {
-    if (step > 1) {
+    if (step === 4 && formData.siteElectricConnection === 'N') {
+      setStep(2);
+    } else if (step > 1) {
       setStep(step - 1);
     }
   };
 
   const submitForm = () => {
-    // Here you would send the formData to your backend
-    console.log('Form data to be submitted:', formData);
-    alert('Form submitted successfully!');
+    if (validateStep()) {
+        console.log('Form data to be submitted:', formData);
+        alert('Form submitted successfully!');
+    }
   };
 
   const renderStep = () => {
@@ -140,7 +192,7 @@ const ListCandidateScreen = () => {
       case 4:
         return <Step4 formData={formData} handleChange={handleChange} />;
       case 5:
-        return <Step5 formData={formData} handleChange={handleChange} />;
+        return <Step5 formData={formData} handleChange={handleChange} errors={errors} />;
       default:
         return null;
     }

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -42,6 +42,7 @@ export default function DashboardScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <Stack.Screen options={{ headerShown: false }} />
       <SideDrawer isVisible={isDrawerVisible} onClose={() => setDrawerVisible(false)} />
       
       <View style={styles.header}>
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.light.darkBlue,
     width: '90%',
-    marginBottom: 20, // Adjusted margin
+    marginTop: 20, // Added margin top
+    marginBottom: 20,
   },
 });

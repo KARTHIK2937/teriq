@@ -14,6 +14,7 @@ export const InputField: React.FC<InputFieldProps> = ({ placeholder, secureTextE
       <TextInput 
         style={styles.input} 
         placeholder={placeholder} 
+        placeholderTextColor="#999"
         secureTextEntry={secureTextEntry} 
         value={value}
         onChangeText={onChangeText}
@@ -33,5 +34,6 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 15,
+    fontSize: 16,
   },
 });

@@ -1,17 +1,19 @@
-
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
+import { getCities } from '../../services/cities';
 import { getCountries } from '../../services/countries';
 import { getRegions } from '../../services/regions';
 import { ErrorText } from '../ui/ErrorText';
 import Heading from '../ui/Heading';
 import { InputDropdown } from '../ui/InputDropdown';
 import { InputField } from '../ui/InputField';
+import RadioButton from '../ui/RadioButton';
 import { SubHeader } from '../ui/SubHeader';
 import { Step1Props } from './types';
 
 const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateType, countryId, errors }: Step1Props) => {
   const [regions, setRegions] = useState<{ label: string; value: string; }[]>([]);
+  const [cities, setCities] = useState<{ label: string; value: string; }[]>([]);
   const [countries, setCountries] = useState<{ label: string; value: string; }[]>([]);
   const [ownerRegions, setOwnerRegions] = useState<{ label: string; value: string; }[]>([]);
 
@@ -31,6 +33,25 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
 
     fetchRegions();
   }, [countryId]);
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (countryId && formData.regionProvince) {
+        const cityData = await getCities(countryId, formData.regionProvince);
+        if (cityData && cityData.cities) {
+          const cityOptions = cityData.cities.map((city: { name: string; id: string; }) => ({
+            label: city.name,
+            value: city.id,
+          }));
+          setCities(cityOptions);
+        }
+      } else {
+        setCities([]);
+      }
+    };
+
+    fetchCities();
+  }, [countryId, formData.regionProvince]);
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -63,6 +84,16 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
 
     fetchOwnerRegions();
   }, [formData.country]);
+
+  const handleRegionChange = (value: string) => {
+    handleChange('regionProvince', value);
+    handleChange('cityTown', '');
+  };
+  
+  const handleConsentChange = () => {
+    const newConsentValue = formData.consent === 'true' ? 'false' : 'true';
+    handleChange('consent', newConsentValue);
+  };
 
   const candidateTypeOptions = [
     { label: 'Independent', value: 'independent' },
@@ -110,6 +141,12 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
             selectedValue={candidateType}
             onValueChange={(value) => setCandidateType(value)}
           />
+          <RadioButton
+            selected={formData.consent === 'true'}
+            onPress={handleConsentChange}
+            label="Give consent to onboard the site on behalf of a landlord."
+          />
+          {errors.consent && <ErrorText message={errors.consent} />}
           {candidateType === 'allocated' && (
             <>
               <SubHeader isRequired>Allocated Nominal</SubHeader>
@@ -129,14 +166,16 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
         label="Select Region/Province"
         items={regions}
         selectedValue={formData.regionProvince}
-        onValueChange={(value) => handleChange('regionProvince', value)}
+        onValueChange={handleRegionChange}
       />
       {errors.regionProvince && <ErrorText message={errors.regionProvince} />}
       <SubHeader isRequired>City/Town</SubHeader>
-      <InputField
-        placeholder="City/Town"
-        value={formData.cityTown}
-        onChangeText={(text) => handleChange('cityTown', text)}
+      <InputDropdown
+        label="Select City/Town"
+        items={cities}
+        selectedValue={formData.cityTown}
+        onValueChange={(value) => handleChange('cityTown', value)}
+        disabled={!formData.regionProvince}
       />
       {errors.cityTown && <ErrorText message={errors.cityTown} />}
       <SubHeader isRequired>Pin/Zipcode</SubHeader>

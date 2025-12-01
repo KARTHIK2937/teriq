@@ -1,19 +1,53 @@
 
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView } from 'react-native';
 import Heading from '../ui/Heading';
-import { InputField } from '../ui/InputField';
+import InputDocument from '../ui/InputDocument';
+import { SubHeader } from '../ui/SubHeader';
 import { StepProps } from './types';
 
 const Step4 = ({ formData, handleChange }: Omit<StepProps, 'userRole'>) => (
-  <View>
-    <Heading>Step 4: Qualifications</Heading>
-    <InputField
-      placeholder="Highest Qualification"
-      value={formData.qualification}
-      onChangeText={(text) => handleChange('qualification', text)}
+  <ScrollView showsVerticalScrollIndicator={false}>
+    <Heading>Legal Documents</Heading>
+    <SubHeader>Proof of ownership of the land or title deed</SubHeader>
+    <InputDocument
+      label="Select a document"
+      value={formData.ownershipProof}
+      onValueChange={(value) => handleChange('ownershipProof', value)}
     />
-  </View>
+    <SubHeader>Property tax document or receipt</SubHeader>
+    <InputDocument
+      label="Select a document"
+      value={formData.taxDocument}
+      onValueChange={(value) => handleChange('taxDocument', value)}
+    />
+    <SubHeader>
+      Latest income tax payment receipt filed by the landlord
+    </SubHeader>
+    <InputDocument
+      label="Select a document"
+      value={formData.incomeTaxReceipt}
+      onValueChange={(value) => handleChange('incomeTaxReceipt', value)}
+    />
+    <SubHeader>Land survey plan/report</SubHeader>
+    <InputDocument
+      label="Select a document"
+      value={formData.landSurveyPlanReport}
+      onValueChange={(value) => handleChange('landSurveyPlanReport', value)}
+    />
+    <SubHeader>Latest water bill</SubHeader>
+    <InputDocument
+      label="Select a document"
+      value={formData.waterBill}
+      onValueChange={(value) => handleChange('waterBill', value)}
+    />
+    <SubHeader>Latest electricity bill</SubHeader>
+    <InputDocument
+      label="Select a document"
+      value={formData.electricityBill}
+      onValueChange={(value) => handleChange('electricityBill', value)}
+    />
+  </ScrollView>
 );
 
 export default Step4;
