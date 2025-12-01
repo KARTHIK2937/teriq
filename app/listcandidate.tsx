@@ -174,13 +174,6 @@ const ListCandidateScreen = () => {
     }
   };
 
-  const submitForm = () => {
-    if (validateStep()) {
-        console.log('Form data to be submitted:', formData);
-        alert('Form submitted successfully!');
-    }
-  };
-
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -213,7 +206,7 @@ const ListCandidateScreen = () => {
       <View style={styles.navigation}>
         {step > 1 && <Button title="Previous" onPress={prevStep} style={styles.navButton} />}
         {step < 5 && <Button title="Next" onPress={nextStep} style={styles.navButton} />}
-        {step === 5 && <Button title="Submit" onPress={submitForm} style={styles.navButton} />}
+        {/* {step === 5 && <Button title="Submit" onPress={submitForm} style={styles.navButton} />} */}
       </View>
     </SafeAreaView>
   );

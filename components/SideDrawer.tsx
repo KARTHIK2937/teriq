@@ -21,6 +21,11 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({ isVisible, onClose }) =>
     onClose(); // Close the drawer after logging out
   };
 
+  const navigateToDashboard = () => {
+    router.push('/dashboard');
+    onClose();
+  };
+
   return (
     <Modal
       animationType="fade"
@@ -32,15 +37,19 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({ isVisible, onClose }) =>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
             <SafeAreaView style={styles.drawerContainer}>
-              <Image 
-                source={require('@/assets/images/icon.png')} 
-                style={styles.logo}
-              />
-              <Text style={styles.drawerHeader}>Menu</Text>
+              <View style={{flex: 1}}>
+                <Image 
+                  source={require('@/assets/images/icon.png')} 
+                  style={styles.logo}
+                />
+                <Text style={styles.drawerHeader}>Menu</Text>
+                <TouchableOpacity style={styles.drawerButton} onPress={navigateToDashboard}>
+                  <Text style={styles.drawerButtonText}>Dashboard</Text>
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.logoutButtonText}>Logout</Text>
               </TouchableOpacity>
-              {/* Other drawer items can be added here */}
             </SafeAreaView>
           </TouchableWithoutFeedback>
         </View>
@@ -53,17 +62,18 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    alignItems: 'flex-end', // This pushes the drawer to the right
+    alignItems: 'flex-end',
   },
   drawerContainer: {
     width: '70%',
     height: '100%',
     backgroundColor: Colors.light.white,
-    paddingTop: 40, // Adjust as needed for status bar
+    paddingTop: 40,
     paddingHorizontal: 20,
+    paddingBottom: 20,
     elevation: 16,
     shadowColor: '#000',
-    shadowOffset: { width: -2, height: 0 }, // Shadow on the left
+    shadowOffset: { width: -2, height: 0 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
   },
@@ -77,11 +87,23 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 30,
-    textAlign: 'center', // Center the header text
+    textAlign: 'center',
     color: Colors.light.softBlack,
   },
-  logoutButton: {
+  drawerButton: {
     backgroundColor: Colors.light.primary,
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  drawerButtonText: {
+    color: Colors.light.white,
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  logoutButton: {
+    backgroundColor: 'red',
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',

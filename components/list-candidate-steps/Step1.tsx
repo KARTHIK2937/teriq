@@ -131,7 +131,7 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <Heading>Site Details</Heading>
+      <Heading>Candidate Detail</Heading>
       {userRole === 'A' && (
         <>
           <SubHeader isRequired>Candidate Type</SubHeader>
@@ -161,6 +161,26 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
           )}
         </>
       )}
+       <View style={{ marginTop: 20 }}>
+        <Heading>Site Geographical Location</Heading>
+      </View>
+      <SubHeader isRequired>Latitude</SubHeader>
+      <InputField
+        placeholder="Latitude"
+        value={formData.latitude}
+        onChangeText={(text) => handleChange('latitude', text)}
+      />
+      {errors.latitude && <ErrorText message={errors.latitude} />}
+      <SubHeader isRequired>Longitude</SubHeader>
+      <InputField
+        placeholder="Longitude"
+        value={formData.longitude}
+        onChangeText={(text) => handleChange('longitude', text)}
+      />
+      {errors.longitude && <ErrorText message={errors.longitude} />}
+        <View style={{ marginTop: 20 }}>
+        <Heading>Site Details</Heading>
+      </View>
       <SubHeader isRequired>Region/Province</SubHeader>
       <InputDropdown
         label="Select Region/Province"
@@ -270,23 +290,6 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
         disabled={!formData.country}
       />
       {errors.ownerRegionProvince && <ErrorText message={errors.ownerRegionProvince} />}
-       <View style={{ marginTop: 20 }}>
-        <Heading>Site Geographical Location</Heading>
-      </View>
-      <SubHeader isRequired>Latitude</SubHeader>
-      <InputField
-        placeholder="Latitude"
-        value={formData.latitude}
-        onChangeText={(text) => handleChange('latitude', text)}
-      />
-      {errors.latitude && <ErrorText message={errors.latitude} />}
-      <SubHeader isRequired>Longitude</SubHeader>
-      <InputField
-        placeholder="Longitude"
-        value={formData.longitude}
-        onChangeText={(text) => handleChange('longitude', text)}
-      />
-      {errors.longitude && <ErrorText message={errors.longitude} />}
     </ScrollView>
   );
 };

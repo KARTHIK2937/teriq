@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter, Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -58,9 +58,10 @@ export default function DashboardScreen() {
         <InfoBlock title='Total Sites' value='12' />
         <InfoBlock title='Sites live on network' value='3' />
         <InfoBlock title='Vacant Sites' value='7' />
-
-        <Button title='+ List a Candidate' onPress={() => router.push('/listcandidate')}/>
-
+<View style={styles.buttonRow}>
+        <Button style={styles.button} title='Candidate List' onPress={() => router.push('/candidate-list')}/>
+        <Button style={styles.button} title='+ List a Candidate' onPress={() => router.push('/listcandidate')}/>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -96,4 +97,15 @@ const styles = StyleSheet.create({
     marginTop: 20, // Added margin top
     marginBottom: 20,
   },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '90%',
+    marginBottom: 16,
+},
+button: {
+    flex: 1,
+    marginHorizontal: 5,
+    width:'48%'
+},
 });

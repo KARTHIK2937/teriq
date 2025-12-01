@@ -1,3 +1,4 @@
+import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, type TouchableOpacityProps } from 'react-native';
 
 export type ButtonProps = TouchableOpacityProps & {
@@ -18,7 +19,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   text: {
     color: '#F4F7FA',
