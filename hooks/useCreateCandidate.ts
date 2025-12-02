@@ -14,7 +14,7 @@ export const useCreateCandidate = () => {
 
       const obj = {
         // Geolocation
-        requirement: storedData.allocatedNominal,
+        requirement: storedData.allocatedNominal ? storedData.allocatedNominal.value : null,
         agent_site_onboarding_consent: storedData.consent,
         region: storedData.regionProvince,
         city: storedData.cityTown,

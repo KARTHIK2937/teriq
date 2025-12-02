@@ -1,12 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 import { InfoBlock } from '../components/InfoBlock';
 import { SideDrawer } from '../components/SideDrawer';
 import { Button } from '../components/ui/Button';
 import { Colors } from '../constants/theme';
+import { useDashboard } from '../hooks/useDashboard';
 
 // A simple inline SVG for the hamburger icon
 const HamburgerIcon = () => (
@@ -20,6 +22,7 @@ const HamburgerIcon = () => (
 export default function DashboardScreen() {
   const [userName, setUserName] = useState('');
   const [isDrawerVisible, setDrawerVisible] = useState(false);
+  const { dashboardData, loading, error } = useDashboard();
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +47,7 @@ export default function DashboardScreen() {
     <SafeAreaView style={styles.safeArea}>
       <Stack.Screen options={{ headerShown: false }} />
       <SideDrawer isVisible={isDrawerVisible} onClose={() => setDrawerVisible(false)} />
-      
+
       <View style={styles.header}>
         <Text style={styles.welcomeMessage}>Welcome, {userName}!</Text>
         <TouchableOpacity onPress={() => setDrawerVisible(true)}>
@@ -55,12 +58,29 @@ export default function DashboardScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.dashboardTitle}>Dashboard</Text>
 
-        <InfoBlock title='Total Sites' value='12' />
-        <InfoBlock title='Sites live on network' value='3' />
-        <InfoBlock title='Vacant Sites' value='7' />
-<View style={styles.buttonRow}>
-        <Button style={styles.button} title='Candidate List' onPress={() => router.push('/candidate-list')}/>
-        <Button style={styles.button} title='+ List a Candidate' onPress={() => router.push('/listcandidate')}/>
+        {loading && <ActivityIndicator size="large" color={Colors.light.darkBlue} />}
+        {error && <Text>{error}</Text>}
+        {dashboardData && (
+          <>
+            <InfoBlock title="Total Sites" value={String(dashboardData.total_candidates)} />
+            <InfoBlock
+              title="Sites live on network"
+              value={String(dashboardData.live_candidates)}
+            />
+            <InfoBlock title="Vacant Sites" value={String(dashboardData.vacant_candidates)} />
+          </>
+        )}
+        <View style={styles.buttonRow}>
+          <Button
+            style={styles.button}
+            title="Candidate List"
+            onPress={() => router.push('/candidate-list')}
+          />
+          <Button
+            style={styles.button}
+            title="+ List a Candidate"
+            onPress={() => router.push('/listcandidate')}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -102,10 +122,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '90%',
     marginBottom: 16,
-},
-button: {
+  },
+  button: {
     flex: 1,
     marginHorizontal: 5,
-    width:'48%'
-},
+    width: '48%',
+  },
 });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, StyleSheet, Button, ActivityIndicator, Text } from 'react-native';
+import { ScrollView, View, StyleSheet, Button, Text } from 'react-native';
 import { getCities } from '../../services/cities';
 import Heading from '../ui/Heading';
 import { InputDropdown } from '../ui/InputDropdown';
@@ -8,14 +8,12 @@ import { SubHeader } from '../ui/SubHeader';
 import { Step5Props } from './types';
 import RadioButton from '../ui/RadioButton';
 import { ErrorText } from '../ui/ErrorText';
-import { useCreateCandidate } from '../../hooks/useCreateCandidate';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
-const Step5 = ({ formData, handleChange, errors }: Step5Props) => {
+const Step5 = ({ formData, handleChange, errors, isSuccess }: Step5Props) => {
   const [cities, setCities] = useState([]);
-  const { mutate: createCandidate, isPending, isSuccess, isError, error } = useCreateCandidate();
-  const navigation = useNavigation();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -30,10 +28,6 @@ const Step5 = ({ formData, handleChange, errors }: Step5Props) => {
     fetchCities();
   }, [formData]);
 
-  if (!formData) {
-    return <ActivityIndicator size="large" />;
-  }
-
   const handleConsentChange = () => {
     const newConsentValue = formData.consent1 === 'true' ? 'false' : 'true';
     handleChange('consent1', newConsentValue);
@@ -44,16 +38,12 @@ const Step5 = ({ formData, handleChange, errors }: Step5Props) => {
     handleChange('consent2', newConsentValue);
   };
 
-  const handleSubmit = () => {
-    createCandidate(formData);
-  };
-
   if (isSuccess) {
     return (
       <View style={styles.successContainer}>
         <Ionicons name="checkmark-circle-outline" size={100} color="green" />
         <Text style={styles.successText}>Candidate Listed Successfully!</Text>
-        <Button title="Go to Dashboard" onPress={() => navigation.navigate('Dashboard' as never)} />
+        <Button title="Go to Dashboard" onPress={() => router.push('/dashboard')} />
       </View>
     );
   }
@@ -118,15 +108,6 @@ const Step5 = ({ formData, handleChange, errors }: Step5Props) => {
         />
         {errors.consent2 && <ErrorText message={errors.consent2} />}
       </View>
-
-      <View style={styles.buttonContainer}>
-        {isPending ? (
-          <ActivityIndicator size="large" />
-        ) : (
-          <Button title="Submit" onPress={handleSubmit} />
-        )}
-        {isError && <ErrorText message={error?.message || 'An unknown error occurred'} />}
-      </View>
     </ScrollView>
   );
 };
@@ -134,10 +115,6 @@ const Step5 = ({ formData, handleChange, errors }: Step5Props) => {
 const styles = StyleSheet.create({
   consentContainer: {
     marginTop: 20,
-  },
-  buttonContainer: {
-    marginTop: 20,
-    alignItems: 'center',
   },
   successContainer: {
     flex: 1,

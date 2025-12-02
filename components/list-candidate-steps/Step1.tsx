@@ -1,5 +1,6 @@
+import { useAllocatedNominals } from '@/hooks/useAllocatedNominals';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { getCities } from '../../services/cities';
 import { getCountries } from '../../services/countries';
 import { getRegions } from '../../services/regions';
@@ -16,6 +17,9 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
   const [cities, setCities] = useState<{ label: string; value: string; }[]>([]);
   const [countries, setCountries] = useState<{ label: string; value: string; }[]>([]);
   const [ownerRegions, setOwnerRegions] = useState<{ label: string; value: string; }[]>([]);
+
+  const { data: allocatedNominalsList, isPending: isAllocatedNominalsLoading } =
+    useAllocatedNominals();
 
   useEffect(() => {
     const fetchRegions = async () => {
@@ -95,16 +99,31 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
     handleChange('consent', newConsentValue);
   };
 
+  const handleAllocatedNominalChange = (value: string) => {
+    const selectedNominal = allocatedNominalsList?.results?.find((nominal: { id: number; }) => nominal.id === Number(value));
+    if (selectedNominal) {
+      handleChange('allocatedNominal', {
+        value: selectedNominal.id,
+        name: selectedNominal.request_id,
+        latitude: selectedNominal.lat,
+        longitude: selectedNominal.lng,
+        region: selectedNominal.region,
+        city: selectedNominal.city,
+      });
+    }
+  };
+
+
   const candidateTypeOptions = [
     { label: 'Independent', value: 'independent' },
     { label: 'Allocated Nominal', value: 'allocated' },
   ];
 
-  const allocatedNominalOptions = [
-    { label: 'A', value: 'a' },
-    { label: 'B', value: 'b' },
-    { label: 'C', value: 'c' },
-  ];
+  const allocatedNominalOptions =
+  allocatedNominalsList?.results?.map((nominal: { request_id: string; id: number; }) => ({
+    label: nominal.request_id,
+    value: nominal.id.toString(),
+  })) || [];
 
   const propertyTypeOptions = [
     { label: 'Vacant land', value: 'L' },
@@ -153,10 +172,20 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
               <InputDropdown
                 label="Allocated nominal"
                 items={allocatedNominalOptions}
-                selectedValue={formData.allocatedNominal}
-                onValueChange={(value) => handleChange('allocatedNominal', value)}
+                selectedValue={formData.allocatedNominal?.value}
+                onValueChange={handleAllocatedNominalChange}
               />
               {errors.allocatedNominal && <ErrorText message={errors.allocatedNominal} />}
+              {formData.allocatedNominal && (
+                <View>
+                  <Text>ID: {formData.allocatedNominal.value}</Text>
+                  <Text>Request ID: {formData.allocatedNominal.name}</Text>
+                  <Text>Latitude: {formData.allocatedNominal.latitude}</Text>
+                  <Text>Longitude: {formData.allocatedNominal.longitude}</Text>
+                  <Text>Region: {formData.allocatedNominal.region}</Text>
+                  <Text>City: {formData.allocatedNominal.city}</Text>
+                </View>
+              )}
             </>
           )}
         </>

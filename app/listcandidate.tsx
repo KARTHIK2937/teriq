@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Step1 from '../components/list-candidate-steps/Step1';
 import Step2 from '../components/list-candidate-steps/Step2';
@@ -10,7 +10,9 @@ import Step5 from '../components/list-candidate-steps/Step5';
 import { FormData } from '../components/list-candidate-steps/types';
 import { SideDrawer } from '../components/SideDrawer';
 import { Button } from '../components/ui/Button';
+import { ErrorText } from '../components/ui/ErrorText';
 import { Colors } from '../constants/theme';
+import { useCreateCandidate } from '../hooks/useCreateCandidate';
 
 const HamburgerIcon = () => (
     <View style={{ width: 24, height: 24, justifyContent: 'space-around' }}>
@@ -26,6 +28,7 @@ const ListCandidateScreen = () => {
   const [isDrawerVisible, setDrawerVisible] = useState(false);
   const [candidateType, setCandidateType] = useState('independent');
   const [countryId, setCountryId] = useState<string | null>(null);
+  const { mutate: createCandidate, isPending, isSuccess, isError, error } = useCreateCandidate();
   const [formData, setFormData] = useState<FormData>({
     regionProvince: '',
     cityTown: '',
@@ -103,7 +106,7 @@ const ListCandidateScreen = () => {
             setUserRole(userData.user.role);
           }
           if (userData && userData.country && userData.country.id) {
-            setCountryId(userData.country.id);
+            setCountryId(userData.country.id.toString());
           }
         }
       } catch (error) {
@@ -174,18 +177,24 @@ const ListCandidateScreen = () => {
     }
   };
 
+  const submitForm = () => {
+    if (validateStep()) {
+      createCandidate(formData);
+    }
+  };
+
   const renderStep = () => {
     switch (step) {
       case 1:
-        return <Step1 formData={formData} handleChange={handleChange} userRole={userRole} candidateType={candidateType} setCandidateType={setCandidateType} countryId={countryId} errors={errors} />;
+        return <Step1 formData={formData} handleChange={handleChange} userRole={userRole || ''} candidateType={candidateType} setCandidateType={setCandidateType} countryId={countryId || ''} errors={errors} />;
       case 2:
-        return <Step2 formData={formData} handleChange={handleChange} />;
+        return <Step2 formData={formData} handleChange={handleChange} errors={errors} />;
       case 3:
-        return <Step3 formData={formData} handleChange={handleChange} />;
+        return <Step3 formData={formData} handleChange={handleChange} errors={errors} />;
       case 4:
-        return <Step4 formData={formData} handleChange={handleChange} />;
+        return <Step4 formData={formData} handleChange={handleChange} errors={errors} />;
       case 5:
-        return <Step5 formData={formData} handleChange={handleChange} errors={errors} />;
+        return <Step5 formData={formData} handleChange={handleChange} errors={errors} isSuccess={isSuccess} />;
       default:
         return null;
     }
@@ -206,8 +215,21 @@ const ListCandidateScreen = () => {
       <View style={styles.navigation}>
         {step > 1 && <Button title="Previous" onPress={prevStep} style={styles.navButton} />}
         {step < 5 && <Button title="Next" onPress={nextStep} style={styles.navButton} />}
-        {/* {step === 5 && <Button title="Submit" onPress={submitForm} style={styles.navButton} />} */}
+        {step === 5 && (
+            isPending ? (
+                <View style={[styles.navButton, { justifyContent: 'center', alignItems: 'center' }]}>
+                    <ActivityIndicator size="large" />
+                </View>
+            ) : (
+                <Button title="Submit" onPress={submitForm} style={styles.navButton} />
+            )
+        )}
       </View>
+      {step === 5 && isError && (
+        <View style={styles.errorContainer}>
+            <ErrorText message={error?.message || 'An unknown error occurred'} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -235,24 +257,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  formStep: {
-    width: '100%',
-    flex: 1,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
   navigation: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
   navButton: {
     width: '45%',
   },
+  errorContainer: {
+      alignItems: 'center',
+      paddingBottom: 10,
+  }
 });
 
 export default ListCandidateScreen;
