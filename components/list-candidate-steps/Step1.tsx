@@ -14,7 +14,7 @@ import { Step1Props } from './types';
 import MapContainer from '../ui/MapContainer';
 import GoogleMap from '../ui/GoogleMap';
 import information, { updateInformation } from '../../assets/staticData/basicAppInformation';
-import { Region, MapEvent } from 'react-native-maps';
+import { Region, MapPressEvent } from 'react-native-maps';
 
 interface MarkerData {
   latitude: number;
@@ -152,7 +152,7 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
     }
   };
 
-  const handleMapPress = (e: MapEvent) => {
+  const handleMapPress = (e: MapPressEvent) => {
     const { latitude, longitude } = e.nativeEvent.coordinate;
     handleChange('latitude', latitude.toString());
     handleChange('longitude', longitude.toString());

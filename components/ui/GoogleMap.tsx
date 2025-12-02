@@ -1,5 +1,5 @@
 import React from 'react';
-import MapView, { PROVIDER_GOOGLE, Region, MapEvent, Marker } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Region, MapPressEvent, Marker } from 'react-native-maps';
 import { StyleSheet } from 'react-native';
 
 interface MarkerData {
@@ -10,7 +10,7 @@ interface MarkerData {
 
 interface GoogleMapProps {
   region: Region;
-  onPress: (e: MapEvent) => void;
+  onPress: (e: MapPressEvent) => void;
   markers?: MarkerData[];
 }
 
