@@ -11,15 +11,52 @@ import { InputField } from '../ui/InputField';
 import RadioButton from '../ui/RadioButton';
 import { SubHeader } from '../ui/SubHeader';
 import { Step1Props } from './types';
+import MapContainer from '../ui/MapContainer';
+import GoogleMap from '../ui/GoogleMap';
+import information, { updateInformation } from '../../assets/staticData/basicAppInformation';
+import { Region, MapEvent } from 'react-native-maps';
+
+interface MarkerData {
+  latitude: number;
+  longitude: number;
+  color: 'blue' | 'green';
+}
 
 const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateType, countryId, errors }: Step1Props) => {
   const [regions, setRegions] = useState<{ label: string; value: string; }[]>([]);
   const [cities, setCities] = useState<{ label: string; value: string; }[]>([]);
   const [countries, setCountries] = useState<{ label: string; value: string; }[]>([]);
   const [ownerRegions, setOwnerRegions] = useState<{ label: string; value: string; }[]>([]);
+  const [initialRegion, setInitialRegion] = useState<Region | undefined>(undefined);
+  const [markers, setMarkers] = useState<MarkerData[]>([]);
 
   const { data: allocatedNominalsList, isPending: isAllocatedNominalsLoading } =
     useAllocatedNominals();
+
+  useEffect(() => {
+    const setMapRegion = async () => {
+      await updateInformation();
+      setInitialRegion({
+        latitude: information.location.lat,
+        longitude: information.location.long,
+        latitudeDelta: 10,
+        longitudeDelta: 10,
+      });
+    };
+    setMapRegion();
+  }, []);
+
+  useEffect(() => {
+    const lat = parseFloat(formData.latitude);
+    const lng = parseFloat(formData.longitude);
+    const existingMarkers = markers.filter(m => m.color !== 'blue');
+    if (!isNaN(lat) && !isNaN(lng)) {
+      setMarkers([...existingMarkers, { latitude: lat, longitude: lng, color: 'blue' }]);
+    } else {
+      setMarkers(existingMarkers);
+    }
+  }, [formData.latitude, formData.longitude]);
+
 
   useEffect(() => {
     const fetchRegions = async () => {
@@ -110,7 +147,15 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
         region: selectedNominal.region,
         city: selectedNominal.city,
       });
+      const existingMarkers = markers.filter(m => m.color !== 'green');
+      setMarkers([...existingMarkers, { latitude: selectedNominal.lat, longitude: selectedNominal.lng, color: 'green' }]);
     }
+  };
+
+  const handleMapPress = (e: MapEvent) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    handleChange('latitude', latitude.toString());
+    handleChange('longitude', longitude.toString());
   };
 
 
@@ -192,6 +237,11 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
       )}
        <View style={{ marginTop: 20 }}>
         <Heading>Site Geographical Location</Heading>
+      </View>
+      <View style={{ height: 200, marginVertical: 20 }}>
+        <MapContainer>
+          {initialRegion && <GoogleMap region={initialRegion} onPress={handleMapPress} markers={markers} />}
+        </MapContainer>
       </View>
       <SubHeader isRequired>Latitude</SubHeader>
       <InputField
