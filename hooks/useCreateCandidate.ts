@@ -98,9 +98,50 @@ export const useCreateCandidate = () => {
         })
       );
 
+      const fileKeys = [
+        'surrounding_img_1',
+        'surrounding_img_2',
+        'surrounding_img_3',
+        'surrounding_img_4',
+        'surrounding_img_5',
+        'surrounding_img_6',
+        'front_elevation',
+        'back_elevation',
+        'first_side_elevation',
+        'second_side_elevation',
+        'site_building_plan',
+        'property_tax_document',
+        'landlord_recent_it',
+        'land_survey_plan',
+        'recent_water_bill',
+        'recent_power_bill',
+        'land_ownership_proof'
+      ];
+
+      const getMimeType = (uri: string) => {
+        const extension = uri.split('.').pop()?.toLowerCase();
+        if (extension === 'jpg' || extension === 'jpeg') return 'image/jpeg';
+        if (extension === 'png') return 'image/png';
+        if (extension === 'pdf') return 'application/pdf';
+        return 'application/octet-stream';
+      };
+
       Object.entries(obj).forEach(([key, value]) => {
         if (value !== '' && value !== undefined && value !== null) {
-          formDataToSend.append(key, value as string | Blob);
+          if (fileKeys.includes(key) && typeof value === 'string' && (value.startsWith('file://') || value.startsWith('data:'))) {
+            const uri = value;
+            const fileName = uri.split('/').pop();
+            const mimeType = getMimeType(uri);
+
+            const file = {
+              uri: uri,
+              name: fileName,
+              type: mimeType,
+            };
+            formDataToSend.append(key, file as any);
+          } else {
+            formDataToSend.append(key, value as string);
+          }
         }
       });
 
