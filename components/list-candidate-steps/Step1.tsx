@@ -28,7 +28,6 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
   const [countries, setCountries] = useState<{ label: string; value: string; }[]>([]);
   const [ownerRegions, setOwnerRegions] = useState<{ label: string; value: string; }[]>([]);
   const [initialRegion, setInitialRegion] = useState<Region | undefined>(undefined);
-  const [markers, setMarkers] = useState<MarkerData[]>([]);
 
   const { data: allocatedNominalsList, isPending: isAllocatedNominalsLoading } =
     useAllocatedNominals();
@@ -45,18 +44,6 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
     };
     setMapRegion();
   }, []);
-
-  useEffect(() => {
-    const lat = parseFloat(formData.latitude);
-    const lng = parseFloat(formData.longitude);
-    const existingMarkers = markers.filter(m => m.color !== 'blue');
-    if (!isNaN(lat) && !isNaN(lng)) {
-      setMarkers([...existingMarkers, { latitude: lat, longitude: lng, color: 'blue' }]);
-    } else {
-      setMarkers(existingMarkers);
-    }
-  }, [formData.latitude, formData.longitude]);
-
 
   useEffect(() => {
     const fetchRegions = async () => {
@@ -147,8 +134,9 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
         region: selectedNominal.region,
         city: selectedNominal.city,
       });
-      const existingMarkers = markers.filter(m => m.color !== 'green');
-      setMarkers([...existingMarkers, { latitude: selectedNominal.lat, longitude: selectedNominal.lng, color: 'green' }]);
+      // Set the candidate location to the nominal's location initially
+      handleChange('latitude', selectedNominal.lat.toString());
+      handleChange('longitude', selectedNominal.lng.toString());
     }
   };
 
@@ -158,6 +146,33 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
     handleChange('longitude', longitude.toString());
   };
 
+  // --- Declarative Markers ---
+  const markers: MarkerData[] = [];
+
+  // Add the static allocated nominal marker (always green)
+  if (candidateType === 'allocated' && formData.allocatedNominal?.latitude) {
+    markers.push({
+      latitude: parseFloat(formData.allocatedNominal.latitude),
+      longitude: parseFloat(formData.allocatedNominal.longitude),
+      color: 'green',
+    });
+  }
+
+  // Add the user-selected candidate marker (always blue)
+  const candidateLat = parseFloat(formData.latitude);
+  const candidateLng = parseFloat(formData.longitude);
+
+  if (!isNaN(candidateLat) && !isNaN(candidateLng)) {
+    // Avoid adding a duplicate marker if the candidate location is the same as the allocated nominal
+    const isDuplicate = markers.some(marker => marker.latitude === candidateLat && marker.longitude === candidateLng);
+    if (!isDuplicate) {
+      markers.push({
+        latitude: candidateLat,
+        longitude: candidateLng,
+        color: 'blue',
+      });
+    }
+  }
 
   const candidateTypeOptions = [
     { label: 'Independent', value: 'independent' },

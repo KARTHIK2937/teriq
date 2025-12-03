@@ -16,7 +16,7 @@ import { ErrorText } from '../components/ui/ErrorText';
 import { InputDropdown } from '../components/ui/InputDropdown';
 import { InputField } from '../components/ui/InputField';
 import { Colors } from '../constants/theme';
-import { initializeApi, getBaseUrl } from '../services/api';
+import { getBaseUrl, initializeApi } from '../services/api';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('realestate@i4sight.net');
@@ -119,8 +119,7 @@ export default function LoginScreen() {
           source={require('@/assets/images/icon.png')}
           style={styles.logo}
         />
-        <Text style={styles.title}>Global Guard</Text>
-        <Text style={styles.subtitle}>Protection meets Precision</Text>
+        
 
         <View style={styles.formContainer}>
           <Text style={styles.welcomeText}>Welcome!</Text>
@@ -164,9 +163,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logo: {
-    width: 100,
+    width: 120,
     height: 100,
-    marginBottom: 10,
+    marginBottom: 15,
   },
   title: {
     fontSize: 32,
