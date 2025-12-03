@@ -18,10 +18,10 @@ const Step3 = ({ formData, handleChange }: Omit<StepProps, 'userRole'>) => (
         handleChange('propertyGridStatus', itemValue)
         }
         items={[
-        { label: 'domestic', value: 'D' },
-        { label: 'commercial', value: 'C' },
-        { label: 'both domestic and commercial', value: 'B' },
-        { label: 'not available', value: 'N' },
+        { label: 'Domestic', value: 'D' },
+        { label: 'Commercial', value: 'C' },
+        { label: 'Both Domestic and Commercial', value: 'B' },
+        { label: 'Not Available', value: 'N' },
         ]}
     />
     <SubHeader>Type of electricity connection</SubHeader>
@@ -32,9 +32,9 @@ const Step3 = ({ formData, handleChange }: Omit<StepProps, 'userRole'>) => (
         handleChange('electicityConnectionType', itemValue)
         }
         items={[
-        { label: 'prepaid', value: 'PRE' },
-        { label: 'postpaid', value: 'POST' },
-        { label: 'not available', value: 'NA' },
+        { label: 'Prepaid', value: 'PRE' },
+        { label: 'Postpaid', value: 'POST' },
+        { label: 'Not Available', value: 'NA' },
         ]}
     />
     <SubHeader>Average grid power availability(in hrs)</SubHeader>
