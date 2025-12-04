@@ -42,7 +42,7 @@ const CandidateDetailsScreen = () => {
             <Stack.Screen options={{ headerShown: false }} />
             <SideDrawer isVisible={isDrawerVisible} onClose={() => setDrawerVisible(false)} />
 
-            <View style={styles.headerContainer}>
+            <View style={styles.header}>
                 <Text style={styles.headerTitle}>Candidate Details</Text>
                 <TouchableOpacity onPress={() => setDrawerVisible(true)}>
                     <HamburgerIcon />
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 20,
     },
-    headerContainer: {
+    header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

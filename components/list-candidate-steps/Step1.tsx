@@ -1,20 +1,20 @@
 import { useAllocatedNominals } from '@/hooks/useAllocatedNominals';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { MapPressEvent, Region } from 'react-native-maps';
+import information, { updateInformation } from '../../assets/staticData/basicAppInformation';
 import { getCities } from '../../services/cities';
 import { getCountries } from '../../services/countries';
 import { getRegions } from '../../services/regions';
 import { ErrorText } from '../ui/ErrorText';
+import GoogleMap from '../ui/GoogleMap';
 import Heading from '../ui/Heading';
 import { InputDropdown } from '../ui/InputDropdown';
 import { InputField } from '../ui/InputField';
+import MapContainer from '../ui/MapContainer';
 import RadioButton from '../ui/RadioButton';
 import { SubHeader } from '../ui/SubHeader';
 import { Step1Props } from './types';
-import MapContainer from '../ui/MapContainer';
-import GoogleMap from '../ui/GoogleMap';
-import information, { updateInformation } from '../../assets/staticData/basicAppInformation';
-import { Region, MapPressEvent } from 'react-native-maps';
 
 interface MarkerData {
   latitude: number;
@@ -236,7 +236,7 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
                 onValueChange={handleAllocatedNominalChange}
               />
               {errors.allocatedNominal && <ErrorText message={errors.allocatedNominal} />}
-              {formData.allocatedNominal && (
+              {/* {formData.allocatedNominal && (
                 <View>
                   <Text>ID: {formData.allocatedNominal.value}</Text>
                   <Text>Request ID: {formData.allocatedNominal.name}</Text>
@@ -245,7 +245,7 @@ const Step1 = ({ formData, handleChange, userRole, candidateType, setCandidateTy
                   <Text>Region: {formData.allocatedNominal.region}</Text>
                   <Text>City: {formData.allocatedNominal.city}</Text>
                 </View>
-              )}
+              )} */}
             </>
           )}
         </>

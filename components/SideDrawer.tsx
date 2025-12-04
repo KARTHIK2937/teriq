@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TouchableWithoutFeedback, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -13,12 +14,33 @@ interface SideDrawerProps {
 
 export const SideDrawer: React.FC<SideDrawerProps> = ({ isVisible, onClose }) => {
   const router = useRouter();
+  const [hasProfile, setHasProfile] = useState(false);
+
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      if (isVisible) { // Only run when the drawer is visible
+        try {
+          const userDataString = await AsyncStorage.getItem('userData');
+          if (userDataString) {
+            const userData = JSON.parse(userDataString);
+            if (userData && userData.user) {
+              setHasProfile(userData.user.has_user_profile);
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch user data from storage', error);
+        }
+      }
+    };
+
+    checkUserProfile();
+  }, [isVisible]);
 
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync('userToken');
     await AsyncStorage.removeItem('userData');
     router.replace('/login');
-    onClose(); // Close the drawer after logging out
+    onClose();
   };
 
   const navigateToDashboard = () => {
@@ -43,9 +65,11 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({ isVisible, onClose }) =>
                   style={styles.logo}
                 />
                 <Text style={styles.drawerHeader}>Menu</Text>
-                <TouchableOpacity style={styles.drawerButton} onPress={navigateToDashboard}>
-                  <Text style={styles.drawerButtonText}>Dashboard</Text>
-                </TouchableOpacity>
+                {hasProfile && (
+                    <TouchableOpacity style={styles.drawerButton} onPress={navigateToDashboard}>
+                        <Text style={styles.drawerButtonText}>Dashboard</Text>
+                    </TouchableOpacity>
+                )}
               </View>
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.logoutButtonText}>Logout</Text>

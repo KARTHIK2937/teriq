@@ -19,7 +19,7 @@ import { Colors } from '../constants/theme';
 import { getBaseUrl, initializeApi } from '../services/api';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('realestate@i4sight.net');
+  const [email, setEmail] = useState('re_withoutprofile@i4sight.net');
   const [password, setPassword] = useState('django_user');
   const [country, setCountry] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -89,7 +89,11 @@ export default function LoginScreen() {
             JSON.stringify(userData)
           );
 
-          router.replace('/dashboard');
+          if (responseData.user.has_user_profile) {
+            router.replace('/dashboard');
+          } else {
+            router.replace('/CreateProfileScreen');
+          }
         } else {
           if (responseData.errors && responseData.errors.non_field_errors) {
             setPasswordError(responseData.errors.non_field_errors[0]);
