@@ -1,34 +1,11 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack, useRouter, useSegments } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
-import React, { useEffect } from 'react';
+import { Stack } from 'expo-router';
+import React from 'react';
 
 const queryClient = new QueryClient();
 
 const InitialLayout = () => {
-  const router = useRouter();
-  const segments = useSegments();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = await SecureStore.getItemAsync('userToken');
-      const isLoginPage = segments[0] === 'login';
-
-      if (token) {
-        if (isLoginPage) {
-          router.replace('/dashboard');
-        }
-      } else {
-        if (!isLoginPage) {
-          router.replace('/login');
-        }
-      }
-    };
-
-    checkAuth();
-  }, [segments]);
-
   return (
     <Stack>
       <Stack.Screen name="login" options={{ headerShown: false }} />
@@ -36,7 +13,7 @@ const InitialLayout = () => {
       <Stack.Screen
         name="listcandidate"
         options={{
-          headerShown: true,
+          headerShown: false,
           title: 'List a Candidate',
           headerBackTitle: 'Back',
         }}

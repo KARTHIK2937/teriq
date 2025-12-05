@@ -19,8 +19,8 @@ import { Colors } from '../constants/theme';
 import { getBaseUrl, initializeApi } from '../services/api';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('re_withoutprofile@i4sight.net');
-  const [password, setPassword] = useState('django_user');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [country, setCountry] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -28,8 +28,15 @@ export default function LoginScreen() {
   const router = useRouter();
 
   const countries = [
+    { label: 'Democratic Republic of Congo', value: 'cod' },
+    { label: 'Ethiopia', value: 'eth' },
     { label: 'India', value: 'ind' },
     { label: 'Kenya', value: 'ken' },
+    { label: 'Liberia', value: 'lbr' },
+    { label: 'Nigeria', value: 'nga' },
+    { label: 'South Sudan', value: 'ssd' },
+    { label: 'Uganda', value: 'uga' },
+    { label: 'Zambia', value: 'zmb' },
   ];
 
   const handleCountryChange = async (value: string) => {
